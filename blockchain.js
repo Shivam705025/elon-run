@@ -1,5 +1,5 @@
-let provider = new ethers.providers.Web3Provider(window.ethereum)
-let signer
+var provider = new ethers.providers.Web3Provider(window.ethereum)
+var signer
 
 async function connectMetamask() {
     await provider.send("eth_requestAccounts", []);
@@ -19,8 +19,8 @@ async function claimTokens() {
         "function mintTokens(address account, uint256 amount) public",
     ];
     const runTokenContract = new ethers.Contract(runTokenContractAddress, runTokenContractAbi, provider);
-    let convertToWei = 1000000000
-    let amountToClaim = 0.0001 * convertToWei
+    var convertToWei = 1000000000
+    var amountToClaim = 2 * convertToWei
     await runTokenContract.connect(signer).mintTokens(signer.getAddress(), amountToClaim.toString())
 }
 
