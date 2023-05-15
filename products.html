@@ -3,49 +3,7 @@
 <head>
   <title>All Products</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 50px auto;
-      background-color: #ffffff;
-      padding: 30px;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .product {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid #ccc;
-    }
-
-    .product-info {
-      flex-grow: 1;
-    }
-
-    .product-info p {
-      margin: 5px 0;
-    }
-
-    .product-image {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      margin-right: 20px;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
+    /* Styles omitted for brevity */
   </style>
 </head>
 <body>
@@ -54,12 +12,24 @@
     <div id="productList"></div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/web3@1.3.6/dist/web3.min.js"></script>
+  <script src="https://cdn.ethers.io/lib/ethers-5.4.umd.min.js"></script>
   <script>
     window.addEventListener('DOMContentLoaded', function() {
-  displayAllProducts();
-});
-const contractAbi = [
+      displayAllProducts();
+    });
+
+    async function displayAllProducts() {
+      if (typeof window.ethereum === 'undefined') {
+        console.error('MetaMask is not installed.');
+        return;
+      }
+
+      try {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const contractAddress = '0x834a5ba75c673c4987d5a6b8259d83896fd19f57'; // Replace with the actual contract address
+        const contractAbi = [
   {
     "inputs": [
       {
@@ -142,50 +112,45 @@ const contractAbi = [
   }
 ];
 
-async function displayAllProducts() {
-  // Connect to the Solidity contract
-  const contractAddress = '0x123...'; // Replace with the actual contract address
-  const contract = new web3.eth.Contract(contractAbi, contractAddress);
+        const contract = new ethers.Contract(contractAddress, contractAbi, signer);
 
-  const productListElement = document.getElementById('productList');
+        const productListElement = document.getElementById('productList');
+        const allProducts = await contract.getAllProducts();
 
-  try {
-    const allProducts = await contract.methods.getAllProducts().call();
-    for (let i = 0; i < allProducts.length; i++) {
-      const product = allProducts[i];
+        for (let i = 0; i < allProducts.length; i++) {
+          const product = allProducts[i];
 
-      // Get the first photo URL
-      const photoUrl = product.photos[0];
+          // Get the first photo URL
+          const photoUrl = product.photos[0];
 
-      // Create HTML elements for displaying product details
-      const productElement = document.createElement('div');
-      productElement.classList.add('product');
+          // Create HTML elements for displaying product details
+          const productElement = document.createElement('div');
+          productElement.classList.add('product');
 
-      const productImageElement = document.createElement('img');
-      productImageElement.src = photoUrl;
-      productImageElement.classList.add('product-image');
+          const productImageElement = document.createElement('img');
+          productImageElement.src = photoUrl;
+          productImageElement.classList.add('product-image');
 
-      const productInfoElement = document.createElement('div');
-      productInfoElement.classList.add('product-info');
+          const productInfoElement = document.createElement('div');
+          productInfoElement.classList.add('product-info');
 
-      const walletAddressElement = document.createElement('p');
-      walletAddressElement.textContent = 'Wallet Address: ' + product.owner;
+          const walletAddressElement = document.createElement('p');
+          walletAddressElement.textContent = 'Wallet Address: ' + product.owner;
 
-      const priceElement = document.createElement('p');
-      priceElement.textContent = 'Price: ' + product.price;
+          const priceElement = document.createElement('p');
+          priceElement.textContent = 'Price: ' + product.price;
 
-      // Append the elements to the product container
-      productInfoElement.appendChild(walletAddressElement);
-      productInfoElement.appendChild(priceElement);
-      productElement.appendChild(productImageElement);
-      productElement.appendChild(productInfoElement);
-      productListElement.appendChild(productElement);
+          // Append the elements to the product container
+          productInfoElement.appendChild(walletAddressElement);
+          productInfoElement.appendChild(priceElement);
+          productElement.appendChild(productImageElement);
+          productElement.appendChild(productInfoElement);
+          productListElement.appendChild(productElement);
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
-  } catch (error) {
-    console.error(error);
-  }
-}
-
   </script>
 </body>
 </html>
