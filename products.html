@@ -1,79 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>All Products</title>
+  <title>Product Listing</title>
   <style>
-    /* Styles omitted for brevity */
-     body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
+    /* CSS styles for product listing */
+    /* ... */
 
-    .container {
-      max-width: 800px;
-      margin: 20px auto;
-      padding: 20px;
-      background-color: #f7f7f7;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .product {
-      display: flex;
-      margin-bottom: 20px;
-      padding: 10px;
-      background-color: #ffffff;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .product-image {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 5px;
-      margin-right: 10px;
-    }
-
-    .product-info {
-      flex-grow: 1;
-    }
-
-    .product-info p {
-      margin: 5px 0;
+    .product-card {
+      /* ... */
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>All Products</h1>
-    <div id="productList"></div>
-  </div>
+  <div id="productListing"></div>
 
-  <script src="https://cdn.ethers.io/lib/ethers-5.4.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.3.6/dist/web3.min.js"></script>
   <script>
     window.addEventListener('DOMContentLoaded', function() {
-      displayAllProducts();
+      // Connect to the Ethereum network using Web3.js
+      if (typeof window.ethereum !== 'undefined') {
+        init();
+      } else {
+        alert('Please install MetaMask to view the products.');
+      }
     });
 
-    async function displayAllProducts() {
-      if (typeof window.ethereum === 'undefined') {
-        console.error('MetaMask is not installed.');
-        return;
-      }
+    async function init() {
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+      const address = accounts[0];
 
-      try {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const contractAddress = '0x834a5ba75c673c4987d5a6b8259d83896fd19f57'; // Replace with the actual contract address
-        const contractAbi = [
+      const contractAddress = '0x834a5ba75c673c4987d5a6b8259d83896fd19f57'; // Replace with the actual contract address
+      const contractAbi = [
   {
     "inputs": [
       {
@@ -156,45 +114,64 @@
   }
 ];
 
-        const contract = new ethers.Contract(contractAddress, contractAbi, signer);
 
-        const productListElement = document.getElementById('productList');
-        const allProducts = await contract.getAllProducts();
+      const web3 = new Web3(window.ethereum);
+      const contract = new web3.eth.Contract(contractAbi, contractAddress);
 
-        for (let i = 0; i < allProducts.length; i++) {
-          const product = allProducts[i];
+      // Retrieve all products from the contract
+      const allProducts = await contract.methods.getAllProducts().call({ from: address });
 
-          // Get the first photo URL
-          const photoUrl = product.photos[0];
+      // Display the products on the page
+      const productListing = document.getElementById('productListing');
 
-          // Create HTML elements for displaying product details
-          const productElement = document.createElement('div');
-          productElement.classList.add('product');
+      allProducts.forEach(async (product) => {
+        const productCard = document.createElement('div');
+        productCard.classList.add('product-card');
 
-          const productImageElement = document.createElement('img');
-          productImageElement.src = photoUrl;
-          productImageElement.classList.add('product-image');
+        // Decode the base64 images
+        const decodedImages = await Promise.all(product.photos.map(decodeBase64Image));
 
-          const productInfoElement = document.createElement('div');
-          productInfoElement.classList.add('product-info');
+        // Create image elements and append them to the product card
+        decodedImages.forEach((imageData) => {
+          const imageElement = document.createElement('img');
+          imageElement.src = imageData;
+          productCard.appendChild(imageElement);
+        });
 
-          const walletAddressElement = document.createElement('p');
-          walletAddressElement.textContent = 'Wallet Address: ' + product.owner;
+        // Create other elements (e.g., price, timestamp) and append them to the product card
+        const priceElement = document.createElement('p');
+        priceElement.textContent = 'Price: ' + product.price;
+        productCard.appendChild(priceElement);
 
-          const priceElement = document.createElement('p');
-          priceElement.textContent = 'Price: ' + product.price;
+        const timestampElement = document.createElement('p');
+        timestampElement.textContent = 'Timestamp: ' + product.timestamp;
+        productCard.appendChild(timestampElement);
 
-          // Append the elements to the product container
-          productInfoElement.appendChild(walletAddressElement);
-          productInfoElement.appendChild(priceElement);
-          productElement.appendChild(productImageElement);
-          productElement.appendChild(productInfoElement);
-          productListElement.appendChild(productElement);
-        }
-      } catch (error) {
-        console.error(error);
-      }
+        // Append the product card to the product listing container
+        productListing.appendChild(productCard);
+      });
+    }
+
+    function decodeBase64Image(base64Image) {
+      return new Promise((resolve, reject) => {
+        const imageElement = document.createElement('img');
+        imageElement.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = imageElement.width;
+          canvas.height = imageElement.height;
+
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(imageElement, 0, 0);
+
+          const imageData = canvas.toDataURL('image/jpeg');
+          resolve(imageData);
+        };
+
+        imageElement.onerror = reject;
+        imageElement.src = base64Image;
+      });
     }
   </script>
 </body>
 </html>
+
