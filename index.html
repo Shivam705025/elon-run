@@ -57,15 +57,15 @@
     });
 
     async function connectWithMetaMask() {
-  if (typeof web3 !== 'undefined') {
+  if (typeof ethereum !== 'undefined') {
     try {
-      await window.ethereum.enable();
-      const accounts = await web3.eth.getAccounts();
+      await ethereum.request({ method: 'eth_requestAccounts' });
+      const accounts = await ethereum.request({ method: 'eth_accounts' });
       const address = accounts[0];
       // Perform login logic with the obtained Ethereum address
       
       // Redirect to the desired website
-      window.location.href = 'https://google.com';
+      window.location.href = 'https://example.com';
     } catch (error) {
       alert('An error occurred while connecting with MetaMask.');
       console.error(error);
@@ -74,6 +74,7 @@
     alert('Please install MetaMask to use this login feature.');
   }
 }
+
 
   </script>
 </body>
