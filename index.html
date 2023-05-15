@@ -4,7 +4,9 @@
   <title>Web3 Login Page</title>
   <style>
     body {
-      background-color: #f2f2f2;
+      background-image: url('background.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
       font-family: Arial, sans-serif;
     }
 
@@ -41,13 +43,12 @@
 </head>
 <body>
   <div class="container">
-    <h1>Web3 Login</h1>
+    <h1>Store Login</h1>
     <form id="loginForm">
       <input type="submit" value="Connect with MetaMask">
     </form>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/web3@1.3.6/dist/web3.min.js"></script>
   <script>
     window.addEventListener('DOMContentLoaded', function() {
       document.getElementById('loginForm').addEventListener('submit', function(event) {
@@ -74,7 +75,6 @@
     alert('Please install MetaMask to use this login feature.');
   }
 }
-
 
   </script>
 </body>
