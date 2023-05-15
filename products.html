@@ -59,8 +59,7 @@
     window.addEventListener('DOMContentLoaded', function() {
   displayAllProducts();
 });
-    
- const contractAbi = [
+const contractAbi = [
   {
     "inputs": [
       {
@@ -143,20 +142,17 @@
   }
 ];
 
+async function displayAllProducts() {
+  // Connect to the Solidity contract
+  const contractAddress = '0x123...'; // Replace with the actual contract address
+  const contract = new web3.eth.Contract(contractAbi, contractAddress);
 
-    async function displayAllProducts() {
-      if (typeof window.ethereum !== 'undefined') {
-        try {
-          await window.ethereum.request({ method: 'eth_requestAccounts' });
-          const provider = new Web3(window.ethereum);
-          const contractAddress = '0x123...'; // Replace with the actual contract address
-          const contract = new provider.eth.Contract(contractAbi, contractAddress);
+  const productListElement = document.getElementById('productList');
 
-          const productListElement = document.getElementById('productList');
-
-          const allProducts = await contract.methods.getAllProducts().call();
-          for (let i = 0; i < allProducts.length; i++) {
-            const product = allProducts[i];
+  try {
+    const allProducts = await contract.methods.getAllProducts().call();
+    for (let i = 0; i < allProducts.length; i++) {
+      const product = allProducts[i];
 
       // Get the first photo URL
       const photoUrl = product.photos[0];
@@ -188,7 +184,7 @@
   } catch (error) {
     console.error(error);
   }
-});
+}
 
   </script>
 </body>
