@@ -1,105 +1,80 @@
-﻿<!DOCTYPE html>
-<html manifest="offline.appcache">
+<!DOCTYPE html>
+<html>
 <head>
-	<style>
-		.button {
-  background-color: #4CAF50;
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
+  <title>Web3 Login Page</title>
+  <style>
+    body {
+      background-color: #f2f2f2;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      width: 400px;
+      margin: 0 auto;
+      margin-top: 150px;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    input[type="submit"] {
+      width: 100%;
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Web3 Login</h1>
+    <form id="loginForm">
+      <input type="submit" value="Connect with MetaMask">
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.3.6/dist/web3.min.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        connectWithMetaMask();
+      });
+    });
+
+    async function connectWithMetaMask() {
+  if (typeof web3 !== 'undefined') {
+    try {
+      await window.ethereum.enable();
+      const accounts = await web3.eth.getAccounts();
+      const address = accounts[0];
+      // Perform login logic with the obtained Ethereum address
+      
+      // Redirect to the desired website
+      window.location.href = 'https://google.com';
+    } catch (error) {
+      alert('An error occurred while connecting with MetaMask.');
+      console.error(error);
+    }
+  } else {
+    alert('Please install MetaMask to use this login feature.');
+  }
 }
-		.button3 {background-color: #f44336;}
-	</style>
-    <meta charset="UTF-8" />
-	
-	
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-	
-	
-	<link rel="manifest" href="app.manifest" />
-	
-	<title>PEPEDASH Play To Earn</title>
-	
-	
-   
-	<style type="text/css">
-		body { background-color: black; color: white; }
-		canvas { -ms-touch-action: none; }
-	</style>
 
-
-</head> 
- 
-<body> 
-	<div id="fb-root"></div>
-	<div style="text-align: center;">
-         
-	
-
-		
-		<div id="c2canvasdiv" style="margin: 0 auto; width: 1280px; height: 720px;">
-		 <button class="button" onclick="claimTokens()">Claim tokens</button>
-                 <button class="button" onclick="connectMetamask()">Connect metamask</button>
-			
-			<canvas id="c2canvas" width="1280" height="720">
-				
-				Your browser does not appear to support HTML5.  Try upgrading your browser to the latest version.  <a href="http://www.whatbrowser.org">What is a browser?</a>
-				<br/><br/><a href="http://www.microsoft.com/windows/internet-explorer/default.aspx">Microsoft Internet Explorer</a><br/>
-				<a href="http://www.mozilla.com/firefox/">Mozilla Firefox</a><br/>
-				<a href="http://www.google.com/chrome/">Google Chrome</a><br/>
-				<a href="http://www.apple.com/safari/download/">Apple Safari</a><br/>
-				<a href="http://www.google.com/chromeframe">Google Chrome Frame for Internet Explorer</a><br/>
-			</canvas>
-			
-		</div>
-
-        <br />
-		
-
-	</div>
-	
-	
-	<script src="jquery-2.1.1.min.js"></script>
-
-
-	
-    
-	<script src="c2runtime.js"></script>
-
-    <script>
-		
-		jQuery(window).resize(function() {
-			cr_sizeCanvas(jQuery(window).width(), jQuery(window).height());
-		});
-		
-		
-		jQuery(document).ready(function ()
-		{
-			
-			cr_createRuntime("c2canvas");
-		});
-		
-		
-		function onVisibilityChanged() {
-			if (document.hidden || document.mozHidden || document.webkitHidden || document.msHidden)
-				cr_setSuspended(true);
-			else
-				cr_setSuspended(false);
-		};
-		
-		document.addEventListener("visibilitychange", onVisibilityChanged, false);
-		document.addEventListener("mozvisibilitychange", onVisibilityChanged, false);
-		document.addEventListener("webkitvisibilitychange", onVisibilityChanged, false);
-		document.addEventListener("msvisibilitychange", onVisibilityChanged, false);
-    </script>
-	  <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
-
-  <script src="blockchain.js" ></script>
-</body> 
-</html> 
+  </script>
+</body>
+</html>
