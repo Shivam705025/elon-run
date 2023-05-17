@@ -7,7 +7,15 @@
       font-family: Arial, sans-serif;
       background-color: #f0f0f0;
     }
-
+    .preview-image {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
     .container {
       max-width: 500px;
       margin: 50px auto;
@@ -102,7 +110,7 @@
     <div class="wallet-address" id="walletAddress"></div>
     <form id="postForm">
       <div class="image-preview" id="imagePreview"></div>
-      <input type="file" name="photos" accept="image/*" multiple required>
+      <input type="file" name="photos" accept="image/*" multiple required onchange="previewImages()">
       <input type="text" name="name" placeholder="Name" required>
       <input type="text" name="address" placeholder="Address" required>
       <input type="text" name="status" placeholder="Status" required>
@@ -227,6 +235,27 @@
       }
     }
   }
+  function previewImages() {
+  const previewContainer = document.getElementById('imagePreview');
+  previewContainer.innerHTML = ''; // Clear previous preview
+
+  const files = Array.from(document.querySelector('input[name="photos"]').files);
+
+  files.forEach((file) => {
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      const image = document.createElement('img');
+      image.src = reader.result;
+      image.classList.add('preview-image');
+
+      previewContainer.appendChild(image);
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
 
   async function postProduct() {
     if (typeof window.ethereum !== 'undefined') {
