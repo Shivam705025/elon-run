@@ -3,10 +3,9 @@
 <head>
   <title>Web3 Login Page</title>
   <style>
-
-
     .container {
-      width: 400px;
+      width: 90%;
+      max-width: 400px;
       margin: 0 auto;
       margin-top: 150px;
       background-color: #ffffff;
@@ -34,6 +33,24 @@
     input[type="submit"]:hover {
       background-color: #45a049;
     }
+
+    @media only screen and (max-width: 480px) {
+      .container {
+        margin-top: 50px;
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+
+      input[type="submit"] {
+        padding: 10px 16px;
+        margin: 4px 0;
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -53,24 +70,23 @@
     });
 
     async function connectWithMetaMask() {
-  if (typeof ethereum !== 'undefined') {
-    try {
-      await ethereum.request({ method: 'eth_requestAccounts' });
-      const accounts = await ethereum.request({ method: 'eth_accounts' });
-      const address = accounts[0];
-      // Perform login logic with the obtained Ethereum address
-      
-      // Redirect to the desired website
-      window.location.href = 'post.html';
-    } catch (error) {
-      alert('An error occurred while connecting with MetaMask.');
-      console.error(error);
+      if (typeof ethereum !== 'undefined') {
+        try {
+          await ethereum.request({ method: 'eth_requestAccounts' });
+          const accounts = await ethereum.request({ method: 'eth_accounts' });
+          const address = accounts[0];
+          // Perform login logic with the obtained Ethereum address
+          
+          // Redirect to the desired website
+          window.location.href = 'post.html';
+        } catch (error) {
+          alert('An error occurred while connecting with MetaMask.');
+          console.error(error);
+        }
+      } else {
+        alert('Please install MetaMask to use this login feature.');
+      }
     }
-  } else {
-    alert('Please install MetaMask to use this login feature.');
-  }
-}
-
   </script>
 </body>
 </html>
